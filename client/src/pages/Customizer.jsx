@@ -8,7 +8,6 @@ import { download } from "../assets";
 import { downloadCanvasToImage, reader } from "../config/helpers";
 import { EditorTabs, FilterTabs, DecalTypes } from "../config/constants";
 import { fadeAnimation, slideAnimation } from "../config/motion";
-
 import {
   AIPicker,
   ColorPicker,
@@ -21,6 +20,7 @@ const Customizer = () => {
   const snap = useSnapshot(state);
 
   const [file, setFile] = useState("");
+
   const [prompt, setPrompt] = useState("");
   const [generatingImg, setGeneratingImg] = useState(false);
 
@@ -30,6 +30,7 @@ const Customizer = () => {
     stylishShirt: false,
   });
 
+  // show tab content depending on the activeTab
   const generateTabContent = () => {
     switch (activeEditorTab) {
       case "colorpicker":
@@ -51,10 +52,25 @@ const Customizer = () => {
   };
 
   const handleSubmit = async (type) => {
-    if (!prompt) return alert("Please enter prompt");
+    if (!prompt) return alert("Please enter a prompt");
 
     try {
-      // Call backend to generate AI
+      setGeneratingImg(true);
+
+      const response = await fetch("http://localhost:8080/api/v1/dalle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: "prompt",
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Data recieved is: ", data);
+
+      handleDecals(type, `data:image/png;base64,${data.photo}`);
     } catch (error) {
       alert(error);
     } finally {
@@ -106,7 +122,6 @@ const Customizer = () => {
     <AnimatePresence>
       {!snap.intro && (
         <>
-          {/* Tab Buttons on side */}
           <motion.div
             key="custom"
             className="absolute top-0 left-0 z-10"
@@ -126,7 +141,7 @@ const Customizer = () => {
               </div>
             </div>
           </motion.div>
-          {/* Go Back Button */}
+
           <motion.div
             className="absolute z-10 top-5 right-5"
             {...fadeAnimation}
@@ -138,7 +153,7 @@ const Customizer = () => {
               customStyles="w-fit px-4 py-2.5 font-bold text-sm"
             />
           </motion.div>
-          {/* Toggle Buttons on the bottom */}
+
           <motion.div
             className="filtertabs-container"
             {...slideAnimation("up")}
