@@ -9,7 +9,7 @@ const FilePicker = ({ file, setFile, readFile }) => {
         <input
           id="file-upload"
           type="file"
-          accept="image/*"
+          // accept="image/*"
           onChange={(e) => setFile(e.target.files[0])}
         />
         <label htmlFor="file-upload" className="filepicker-label">
@@ -33,6 +33,14 @@ const FilePicker = ({ file, setFile, readFile }) => {
           title="Full"
           handleClick={() => readFile("full")}
           customStyles="text-xs"
+        />
+      </div>
+      <div>
+        <CustomButton
+          type="outline"
+          title="Model"
+          handleClick={() => readFile("model")}
+          customStyles="text-xs w-full"
         />
       </div>
     </div>
